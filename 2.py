@@ -1,20 +1,28 @@
-n = int(input('До какого числа "рисовать" решето Эратосфена: ')) ##определяем промежуток от 1 до n
-cqrt = int(n**0.5) ##целочисленный корень от n(нужен для "красивого вывода")
-numbers = [i for i in range(1, n + 1)]##список чисел от 1 до n
-count = 1  ##количество пройденных в цикле чисел
-numbers[0] = 0     ## сразу меняем 1 на 0
-while count < n:
-    temporary = numbers[count]   ##запоминаем текущее число
-    for i in range(count + 1, len(numbers)):
-        if temporary != 0:   ##проверяем какие числа ему кратны и меняем на 0
-            if numbers[i] % temporary == 0:
-                numbers[i] = 0
-        else:
-            continue   ##чтоб не приходилось проверять деление на 0, скипаем 0
-    count += 1
-
-for i in range(cqrt):
-    for j in range(cqrt):
-        print(f'%{len(str(n)) + 1}d' % numbers[i * cqrt + j], end = ' ')   ##красивый вывод
-
-    print()
+## 6, 7, 8 монетки на размен
+money_const = int(input("Введите, какую следует разменять: "))
+coins = {6 : 0, 7 : 0, 8 : 0}   ##словарь с количеством монет разного номинала
+Flag = True   ##флажок для вывода -42
+if money_const % 6 == 0:
+    coins[6] = money_const // 6
+elif money_const % 8 == 0:
+    coins[8] = money_const // 8     ## сразу проверка кратности на монеты
+elif money_const % 7 == 0:
+    coins[7] = money_const // 7
+elif money_const < 6 + 6:     ## проверка возможности размена(если минимальная возможная сумма монет больше суммы,
+    print(-42)                ## которую стоит разменять(6, 7, 8 уже проверили выше), размен не возможен)
+    Flag = False              ## -42 уже вывели, поэтому меняем флажок
+else:
+    money_temp = money_const  ## создаем копию денег, которую будем изменять
+    while money_temp % 6 != 0 or  money_temp % 8 != 0: ## проверка на кратность четных чисел 6 и 8
+        money_temp -= 7    ## вычетаем нечетную 7 и меняем в словаре количество "7"
+        coins[7] += 1
+        if money_temp % 6 == 0:
+            coins[6] = money_temp // 6
+            break                          ## проверка на кратность четных чисел 6 и 8, если кратно, меняем количесство
+        elif money_temp % 8 == 0:          ## "6" и "8" в словаре и выходим из цикла
+            coins[8] = money_temp // 8
+            break
+if money_const - coins[6] * 6 - coins[8] * 8 - coins[7] * 7 == 0:  ## проверка получившегося количества монет
+    print(f"Итого: {coins[6]} монет(a/ы) по 6 рублей, {coins[7]} монет(a/ы) по 7 рублей и {coins[8]} монет(a/ы) по 8 рублей")
+elif Flag:
+    print(-42)
